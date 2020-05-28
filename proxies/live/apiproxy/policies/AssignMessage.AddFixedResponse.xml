@@ -1,0 +1,14 @@
+<AssignMessage async="false" continueOnError="false" enabled="true" name="AssignMessage.AddCors">
+    <FaultRules/>
+    <Properties/>
+    <Set>
+        <Payload contentType="application/json" variablePrefix="%" variableSuffix="#">
+          {
+  	   "system_timestamp": "%system.time.year#-%system.time.month#-%system.time.day#T%system.time.hour#:%system.time.minute#:%system.time.second#.%system.time.millisecond#Z",
+ 	 "TransactionId": "%request.header.TransactionId#"
+}
+        </Payload>
+    </Set>
+    <IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+    <AssignTo createNew="false" transport="http" type="response"/>
+</AssignMessage>

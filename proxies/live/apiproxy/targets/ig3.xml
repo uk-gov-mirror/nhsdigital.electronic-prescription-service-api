@@ -59,14 +59,9 @@
       <Step>
         <Name>AssignMessage.AddAsidHeader</Name>
       </Step>
+      <Step>
+        <Name>AssignMessage.AddFixedResponse</Name>
+      </Step>
     </Request>
   </PreFlow>
-  <HTTPTargetConnection>
-    <SSLInfo>
-      <Enabled>true</Enabled>
-    </SSLInfo>
-    <LoadBalancer>
-      <Server name="ig3" />
-    </LoadBalancer>
-  </HTTPTargetConnection>
 </TargetEndpoint>
