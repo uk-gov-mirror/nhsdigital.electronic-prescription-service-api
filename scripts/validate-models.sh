@@ -25,9 +25,14 @@ function validateResources {
     rm "$1_"*
 }
 
+wget -nc https://packages.simplifier.net/UK.Spine.r4/-/UK.Spine.r4-0.0.3-dev.tgz
 wget -nc https://packages.simplifier.net/UK.Core.r4/-/UK.Core.r4-1.2.0.tgz
 wget -nc https://packages.simplifier.net/UK.DM.r4/-/UK.DM.r4-0.0.18-dev.tgz
 
 # validateResources "Patient" "./UK.Core.r4-1.2.0.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/UKCore-Patient"
 validateResources "Patient" "./UK.DM.r4-0.0.18-dev.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/DM-Patient"
 validateResources "MedicationRequest" "./UK.DM.r4-0.0.18-dev.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/DM-MedicationRequest"
+validateResources "PractitionerRole" "UK.Spine.r4-0.0.3-dev.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/Spine-PractitionerRole"
+validateResources "Practitioner" "UK.Spine.r4-0.0.3-dev.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/Spine-Practitioner"
+validateResources "Organization" "UK.Spine.r4-0.0.3-dev.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/Spine-Organization"
+validateResources "MessageHeader" "UK.Spine.r4-0.0.3-dev.tgz" "https://fhir.nhs.uk/R4/StructureDefinition/Spine-MessageHeader"
