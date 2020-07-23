@@ -1,27 +1,27 @@
-export abstract class Resource {
+export interface Resource {
     id?: string
     resourceType: string
 }
 
-export class Bundle extends Resource {
-    entry?: Array<BundleEntry>
+export interface Bundle extends Resource {
+    entry: Array<BundleEntry>
 }
 
-class BundleEntry {
+export interface BundleEntry {
     fullUrl?: string
     resource?: Resource
 }
 
-export class Identifier {
+export interface Identifier {
     system?: string
     value?: string
 }
 
-class MedicationRequestGroupIdentifier extends Identifier {
+interface MedicationRequestGroupIdentifier extends Identifier {
     extension?: Array<IdentifierExtension>
 }
 
-export class MedicationRequest extends Resource {
+export interface MedicationRequest extends Resource {
     identifier?: Array<Identifier>
     category?: Array<CodeableConcept>
     medicationCodeableConcept: CodeableConcept
@@ -35,39 +35,39 @@ export class MedicationRequest extends Resource {
     extension?: Array<Extension>
 }
 
-export class CodeableConcept {
+export interface CodeableConcept {
     coding: Array<Coding>
 }
 
-export class Coding {
+export interface Coding {
     system?: string
     code?: string
     display?: string
     version?: number
 }
 
-export class Reference<T extends Resource> {
+export interface Reference<T extends Resource> {
     reference: string
 }
 
-export class Dosage {
+export interface Dosage {
     text?: string
 }
 
-export class MedicationRequestDispenseRequest {
+export interface MedicationRequestDispenseRequest {
     quantity?: SimpleQuantity
     performer?: Reference<Organization>
     validityPeriod?: Period
 }
 
-export class SimpleQuantity {
+export interface SimpleQuantity {
     value?: string
     unit?: string
     system?: string
     code?: string
 }
 
-export class Patient extends Resource {
+export interface Patient extends Resource {
     identifier?: Array<Identifier>
     name?: Array<HumanName>
     telecom?: Array<ContactPoint>
@@ -77,7 +77,7 @@ export class Patient extends Resource {
     generalPractitioner?: Array<Reference<PractitionerRole>>
 }
 
-export class HumanName {
+export interface HumanName {
     use?: string
     family?: string
     given?: Array<string>
@@ -85,14 +85,14 @@ export class HumanName {
     suffix?: Array<string>
 }
 
-export class ContactPoint {
+export interface ContactPoint {
     system?: string
     value?: string
     use?: string
     rank?: number //TODO use this as a tie-breaker
 }
 
-export class Address {
+export interface Address {
     use?: string
     type?: string
     text?: string
@@ -103,19 +103,19 @@ export class Address {
     postalCode?: string
 }
 
-export class PractitionerRole extends Resource {
+export interface PractitionerRole extends Resource {
     practitioner?: Reference<Practitioner>
     organization?: Reference<Organization>
 }
 
-export class Practitioner extends Resource {
+export interface Practitioner extends Resource {
     identifier?: Array<Identifier>
     name?: Array<HumanName>
     telecom?: Array<ContactPoint>
     address?: Array<Address>
 }
 
-export class Organization extends Resource {
+export interface Organization extends Resource {
     identifier?: Array<Identifier>
     type?: Array<CodeableConcept>
     name?: string
@@ -124,63 +124,53 @@ export class Organization extends Resource {
     partOf?: Reference<Organization>
 }
 
-export class OperationOutcomeIssue {
+export interface OperationOutcomeIssue {
     severity: string
     code: string
     details: CodeableConcept
-
-    constructor(severity: string, code: string, details: CodeableConcept) {
-        this.severity = severity
-        this.code = code
-        this.details = details
-    }
 }
 
-export class OperationOutcome {
-    readonly resourceType = "OperationOutcome"
+export interface OperationOutcome {
+    resourceType: "OperationOutcome"
     issue: Array<OperationOutcomeIssue>
 }
 
-export class Parameters {
-    readonly resourceType = "Parameters"
+export interface Parameters {
+    resourceType: "Parameters"
     parameter: Array<Parameter>
-
-    constructor(parameters: Array<Parameter>) {
-        this.parameter = parameters
-    }
 }
 
-export class Parameter {
+export interface Parameter {
     name: string
     valueString: string
 }
 
-export abstract class Extension {
+export interface Extension {
     url: string
 }
 
-export class IdentifierExtension extends Extension {
+export interface IdentifierExtension extends Extension {
     valueIdentifier: Identifier
 }
 
-export class CodingExtension extends Extension {
+export interface CodingExtension extends Extension {
     valueCoding: Coding
 }
 
-export class ReferenceExtension<T extends Resource> extends Extension {
+export interface ReferenceExtension<T extends Resource> extends Extension {
     valueReference: Reference<T>
 }
 
-class Signature {
+interface Signature {
     who: Reference<PractitionerRole>
     data: string
 }
 
-export class Provenance extends Resource {
+export interface Provenance extends Resource {
     signature: Array<Signature>
 }
 
-export class Period {
+export interface Period {
     start: string
     end: string
 }

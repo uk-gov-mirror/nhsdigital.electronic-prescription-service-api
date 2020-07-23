@@ -8,12 +8,13 @@ import * as crypto from "crypto-js"
 import moment from "moment"
 import {wrap} from "../resources/transport-wrapper"
 import {Extension, IdentifierExtension, PractitionerRole} from "./fhir-resources";
+import {notEmpty} from "../help/helpers"
 
-//TODO - is there a better way than returning Array<unknown>?
-export function getResourcesOfType(fhirBundle: fhir.Bundle, resourceType: string): Array<unknown> {
+export function getResourcesOfType(fhirBundle: fhir.Bundle, resourceType: string): Array<fhir.Resource> {
     return fhirBundle.entry
         .map(entry => entry.resource)
-        .filter(resource => resource.resourceType === resourceType)
+        .filter(notEmpty)
+        .filter(resource => resource?.resourceType === resourceType)
 }
 
 export function getResourceForFullUrl(fhirBundle: fhir.Bundle, resourceFullUrl: string): fhir.Resource {
