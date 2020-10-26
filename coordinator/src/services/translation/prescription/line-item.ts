@@ -43,7 +43,9 @@ function convertDosageInstructions(dosageInstruction: Array<fhir.Dosage>) {
     const testMethodCodingDisplay = dosageInstruction[0].method.coding[0].display
     const testTiming = convertToEnglish(dosageInstruction[0].timing.repeat)
     dosageInstructionsValue =
-      `${testDoseQuantityValue}${testDoseQuantityUnit}, ${testMethodCodingDisplay}, ${testTiming}`
+      `${testDoseQuantityValue}${testDoseQuantityUnit}, ` +
+      `${testMethodCodingDisplay}, ` +
+      `${testTiming}`
   }
   const hl7V3DosageInstructions = new prescriptions.DosageInstructions(dosageInstructionsValue)
   return new prescriptions.LineItemPertinentInformation2(hl7V3DosageInstructions)
@@ -51,14 +53,14 @@ function convertDosageInstructions(dosageInstruction: Array<fhir.Dosage>) {
 
 function convertToEnglish(repeatValue: fhir.Repeat): string {
   const times = convertToNumeralAdverb(repeatValue.frequency.toString())
-
   const perValue = repeatValue.period
-
   const timescale = convertTimeUnit(repeatValue.periodUnit)
+  const forTimescale = convertBoundsDuration(repeatValue.boundsDuration)
 
   return `${times} per ` +
-    `${perValue.toString() == "1" ? "" : `${perValue }`}` +
-    `${timescale}${perValue.toString() == "1" ? "" : "s"}`
+    `${perValue.toString() == "1" ? "" : `${perValue} `} ` +
+    `${timescale}${perValue.toString() == "1" ? "" : "s"}, ` +
+    `${forTimescale}`
 }
 
 function convertToNumeralAdverb(cardinalNumber: string): string {
@@ -85,6 +87,13 @@ function convertTimeUnit(timeCode: string): string {
   default:
     throw new Boom("not recognised")
   }
+}
+
+function convertBoundsDuration(boundsDuration: fhir.SimpleQuantity | undefined): string {
+  if (!boundsDuration) {
+    return ""
+  }
+  return `for ${boundsDuration.value} + ${boundsDuration.unit}${boundsDuration.value.toString() == "1" ? "" : "s"}`
 }
 
 export function convertPrescriptionEndorsements(
