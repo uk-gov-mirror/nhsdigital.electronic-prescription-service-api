@@ -68,7 +68,18 @@ export interface IdentifierReference<T extends Resource> {
 
 export interface Dosage {
   text: string
+  timing?: {repeat: Repeat}
+  route?: CodeableConcept
+  method?: CodeableConcept
+  doseAndRate?: Array<{doseQuantity: SimpleQuantity}>
   patientInstruction?: string
+}
+
+export interface Repeat {
+  boundsDuration: SimpleQuantity
+  frequency: string | LosslessNumber
+  period: string | LosslessNumber
+  periodUnit: string
 }
 
 export interface MedicationRequestDispenseRequest {

@@ -10,6 +10,7 @@ import * as core from "../../../models/hl7-v3/hl7-v3-datatypes-core"
 import * as codes from "../../../models/hl7-v3/hl7-v3-datatypes-codes"
 import * as prescriptions from "../../../models/hl7-v3/hl7-v3-prescriptions"
 import {ElementCompact, js2xml} from "xml-js"
+import {Boom} from "@hapi/boom"
 
 function convertProduct(medicationCodeableConcept: fhir.CodeableConcept) {
   const fhirMedicationCode = getCodingForSystem(
@@ -32,12 +33,58 @@ function convertLineItemComponent(fhirQuantity: fhir.SimpleQuantity) {
 }
 
 function convertDosageInstructions(dosageInstruction: Array<fhir.Dosage>) {
-  const dosageInstructionsValue = onlyElement(
+  let dosageInstructionsValue = onlyElement(
     dosageInstruction,
     "MedicationRequest.dosageInstruction"
   ).text
+  if (!dosageInstructionsValue) {
+    const testDoseQuantityValue = dosageInstruction[0].doseAndRate[0].doseQuantity.value
+    const testDoseQuantityUnit = dosageInstruction[0].doseAndRate[0].doseQuantity.unit
+    const testMethodCodingDisplay = dosageInstruction[0].method.coding[0].display
+    const testTiming = convertToEnglish(dosageInstruction[0].timing.repeat)
+    dosageInstructionsValue =
+      `${testDoseQuantityValue}${testDoseQuantityUnit}, ${testMethodCodingDisplay}, ${testTiming}`
+  }
   const hl7V3DosageInstructions = new prescriptions.DosageInstructions(dosageInstructionsValue)
   return new prescriptions.LineItemPertinentInformation2(hl7V3DosageInstructions)
+}
+
+function convertToEnglish(repeatValue: fhir.Repeat): string {
+  const times = convertToNumeralAdverb(repeatValue.frequency.toString())
+
+  const perValue = repeatValue.period
+
+  const timescale = convertTimeUnit(repeatValue.periodUnit)
+
+  return `${times} per ` +
+    `${perValue.toString() == "1" ? "" : `${perValue }`}` +
+    `${timescale}${perValue.toString() == "1" ? "" : "s"}`
+}
+
+function convertToNumeralAdverb(cardinalNumber: string): string {
+  switch (cardinalNumber) {
+  case "1":
+    return "once"
+  case "2":
+    return "twice"
+  default:
+    return `${cardinalNumber} times`
+  }
+}
+
+function convertTimeUnit(timeCode: string): string {
+  switch (timeCode) {
+  case "d":
+    return "day"
+  case "w":
+    return "week"
+  case "mo":
+    return "month"
+  case "a":
+    return "year"
+  default:
+    throw new Boom("not recognised")
+  }
 }
 
 export function convertPrescriptionEndorsements(
